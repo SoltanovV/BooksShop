@@ -23,11 +23,11 @@ public class Book
     /// <summary>
     /// Навигационное свойство для Order
     /// </summary>
-    public IEnumerable<Order> Orders { get; set; } 
+    public IEnumerable<Order>? Orders { get; set; } 
 
     /// <summary>
     /// Навигационное свойство для BookOrder
     /// </summary>
-    public IEnumerable<BookOrder> BookOrder { get; set; }
+    public IEnumerable<BookOrder>? BookOrder { get; set; }
 
 }

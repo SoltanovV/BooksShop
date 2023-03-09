@@ -1,7 +1,5 @@
-using AutoMapper;
+using BooksShop.Middlewares;
 using BooksShop.Utilities;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,6 +41,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<ExceptionHanlingMiddleware>();
 app.MapControllers();
 
 app.Run();

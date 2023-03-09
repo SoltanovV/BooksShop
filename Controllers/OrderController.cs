@@ -22,8 +22,6 @@ namespace BooksShop.Controllers
         [Route("id/{id}")]
         public async Task<ActionResult<IEnumerable<GetOrderResponce>>> GetOrderAsync(Guid id)
         {
-            try
-            {
                 _logger.LogInformation("Запрос GetOrderAsync получен");
 
                 var result = await _repo.GetOrderAsync(id);
@@ -33,20 +31,13 @@ namespace BooksShop.Controllers
                 _logger.LogInformation("Запрос GetOrderAsync выполнен");
 
                 return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                return BadRequest(ex.Message);
-            }
+
         }
 
         [HttpGet]
         [Route("date/{date}")]
         public async Task<ActionResult<IEnumerable<GetOrderResponce>>> GetOrdersAsync(DateTime date)
         {
-            try
-            {
                 _logger.LogInformation("Запрос GetOrderNumAsync получен");
 
                 var result = await _repo.GetOrdersAsync(date);
@@ -56,12 +47,7 @@ namespace BooksShop.Controllers
                 _logger.LogInformation("Запрос GetOrdersAsync выполнен");
 
                 return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                return BadRequest(ex.Message);
-            }
+           
         }
 
         [HttpGet]

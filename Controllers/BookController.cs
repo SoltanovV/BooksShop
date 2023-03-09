@@ -19,11 +19,10 @@ namespace BooksShop.Controllers
         }
 
         [HttpGet]
-        [Route("id/{id}")]
+        [Route("id/{id:guid}")]
         public async Task<ActionResult<GerBookResponce>> GetBookIdAsync (Guid id)
         {
-            try
-            {
+
                 _logger.LogInformation("Запрос GetBookIdAsync получен");
 
                 var result = await _repo.GetBookAsync(id);
@@ -33,13 +32,6 @@ namespace BooksShop.Controllers
                 _logger.LogInformation("Запрос GetBookIdAsync выполнен");
 
                 return Ok(responce);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                return BadRequest(ex.Message);
-            }
-           
         }
 
         [HttpGet]
@@ -63,11 +55,10 @@ namespace BooksShop.Controllers
                 _logger.LogError(ex.Message);
                 return BadRequest(ex.Message);
             }
-
         }
 
         [HttpGet]
-        [Route("date/{date}")]
+        [Route("date/{date:datetime}")]
         public async Task<ActionResult<IEnumerable<GerBookResponce>>> GetBooksDateAsync(DateTime date)
         {
             try
