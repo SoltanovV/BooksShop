@@ -1,49 +1,49 @@
 ﻿using System.Net;
 using System.Text.Json;
 
-namespace BooksShop.Middlewares
+namespace BooksShop.Middlewares;
+
+public class ExceptionHanlingMiddleware
 {
-    public class ExceptionHanlingMiddleware
+    private readonly RequestDelegate _requestDelegate;
+    private readonly ILogger<ExceptionHanlingMiddleware> _logger;
+
+    public ExceptionHanlingMiddleware(RequestDelegate requestDelegate,
+        ILogger<ExceptionHanlingMiddleware> logger)
     {
-        private readonly RequestDelegate _requestDelegate;
-        private readonly ILogger<ExceptionHanlingMiddleware> _logger;   
+        _requestDelegate = requestDelegate;
+        _logger = logger;
+    }
 
-        public ExceptionHanlingMiddleware(RequestDelegate requestDelegate, 
-            ILogger<ExceptionHanlingMiddleware> logger)
+    public async Task InvokeAsync(HttpContext http)
+    {
+        try
         {
-            _requestDelegate = requestDelegate;
-            _logger = logger;
+            await _requestDelegate(http);
         }
-
-        public async Task InvokeAsync(HttpContext http)
+        catch (Exception ex)
         {
-            try
-            {
-                await _requestDelegate(http);
-            }
-            catch (Exception ex)
-            {
-                await HadleExceptionAsync(http, ex.Message, HttpStatusCode.NotFound, "Ошибка");
-            }
+            await HadleExceptionAsync(http, ex.Message, HttpStatusCode.NotFound, "Ошибка");
         }
+    }
 
-        private async Task HadleExceptionAsync(HttpContext context, string exMessage, HttpStatusCode statusCode, string message)
+    private async Task HadleExceptionAsync(HttpContext context, string exMessage, HttpStatusCode statusCode,
+        string message)
+    {
+        _logger.LogError(exMessage);
+        var response = context.Response;
+
+        response.ContentType = "application/json";
+        response.StatusCode = (int)statusCode;
+
+        ErrorDto errorDto = new()
         {
-            _logger.LogError(exMessage);
-            HttpResponse response = context.Response;
+            StatusCode = (int)statusCode,
+            Message = message
+        };
 
-            response.ContentType = "application/json";
-            response.StatusCode = (int)statusCode;
+        var result = JsonSerializer.Serialize(errorDto);
 
-            ErrorDto errorDto = new()
-            {
-                StatusCode = (int)statusCode,
-                Message = message
-            };
-
-            string result = JsonSerializer.Serialize(errorDto);
-
-            await response.WriteAsJsonAsync(result);
-        }
+        await response.WriteAsJsonAsync(result);
     }
 }

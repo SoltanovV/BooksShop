@@ -1,5 +1,8 @@
 ﻿namespace BooksShop.Models.Request;
 
+/// <summary>
+/// Request для создания книги
+/// </summary>
 public class CreateBookRequest
 {
     /// <summary>

@@ -13,7 +13,7 @@ public class Book
     /// <summary>
     /// Название книги
     /// </summary>
-    public string Name { get; set; } = string.Empty; 
+    public string Name { get; set; } = string.Empty;
 
     /// <summary>
     /// Дата выхода книги
@@ -23,11 +23,10 @@ public class Book
     /// <summary>
     /// Навигационное свойство для Order
     /// </summary>
-    public IEnumerable<Order>? Orders { get; set; } 
+    public IEnumerable<Order>? Orders { get; set; }
 
     /// <summary>
     /// Навигационное свойство для BookOrder
     /// </summary>
     public IEnumerable<BookOrder>? BookOrder { get; set; }
-
 }
