@@ -1,5 +1,7 @@
 using AutoMapper;
 using BooksShop.Utilities;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,16 +13,25 @@ var connection = builder.Configuration.GetConnectionString("DefaultConnection");
 // passing a string connetction 
 builder.Services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(connection));
 
+
+builder.Services.AddMvc().AddJsonOptions(o => {
+    o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    o.JsonSerializerOptions.MaxDepth = 0;
+    o.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+    
+});
+
 // settings automapper
-IMapper mapper = AutomapperSettings.RegisterMaps().CreateMapper();
-builder.Services.AddSingleton(mapper);
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddAutoMapper(typeof(AutomapperSettings));
 
 builder.Services.AddTransient<IBookRepository, BookRepository>();
+builder.Services.AddTransient<IOrderRepository, OrderRepository>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+
 
 
 var app = builder.Build();
