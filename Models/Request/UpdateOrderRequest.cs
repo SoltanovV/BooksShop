@@ -1,16 +1,14 @@
 ﻿namespace BooksShop.Models.Request;
 
-public class BooksOrdersRequest
+public class UpdateOrderRequest
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    public Guid OrderId { get; set; }
 
     /// <summary>
     /// 
     /// </summary>
-    public int BookId { get; set; }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public int OrderId { get; set; }
-
+    public Guid[] ArrayBooksId { get; set; }
 }
