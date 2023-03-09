@@ -1,4 +1,5 @@
-﻿global using Microsoft.EntityFrameworkCore;
+﻿global using System.Text.Json.Serialization;
+global using Microsoft.EntityFrameworkCore;
 global using BooksShop.Models.Responce;
 global using BooksShop.Models.Request;
 global using BooksShop.Models.Entity;
