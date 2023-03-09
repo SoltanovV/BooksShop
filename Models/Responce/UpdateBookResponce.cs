@@ -1,20 +1,19 @@
 ﻿namespace BooksShop.Models.Responce;
 
-public class BooksOrdersResponces
+public class UpdateBookResponce
 {
     /// <summary>
     /// 
     /// </summary>
-    public int Id { get; set; }
+    public Guid BookId { get; set; }
 
     /// <summary>
     /// 
     /// </summary>
-    public int NumberOrder { get; set; }
+    public string Name { get; set; }
 
     /// <summary>
     /// 
     /// </summary>
     public DateTime Release { get; set; }
-
 }
