@@ -1,4 +1,6 @@
-﻿namespace BooksShop.Models.Entity;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BooksShop.Models.Entity;
 
 /// <summary>
 /// 
@@ -6,27 +8,22 @@
 public class Order
 {
     /// <summary>
-    /// 
+    /// Id заказа
     /// </summary>
-    public int Id { get; set; } 
+    public Guid OrderId { get; set; } = Guid.NewGuid();
 
     /// <summary>
-    /// 
-    /// </summary>
-    public int NumberOrder { get; set; }
-
-    /// <summary>
-    /// 
+    /// Дата создания заказа
     /// </summary>
     public DateTime OrderDate { get; set; }
 
     /// <summary>
-    /// 
+    /// Навигационное свойство для Book
     /// </summary>
-    public IEnumerable<Book>? Books { get; set; }
+    public IEnumerable<Book> Books { get; set; }
 
     /// <summary>
-    /// 
+    /// Навигационное свойство для BookOrder
     /// </summary>
     public IEnumerable<BookOrder> BookOrder { get; set; }
 }
