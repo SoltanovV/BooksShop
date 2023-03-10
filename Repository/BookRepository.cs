@@ -1,4 +1,5 @@
-﻿namespace BooksShop.Repository;
+﻿
+namespace BooksShop.Repository;
 
 public class BookRepository : IBookRepository, IDisposable
 {
@@ -16,7 +17,7 @@ public class BookRepository : IBookRepository, IDisposable
         {
             var search = await _db.Books.SingleOrDefaultAsync(b => b.BookId == id);
             if (search is not null) return search;
-            throw new Exception("Не удалось найти книгу");
+            throw new Exception("Not Found Book");
         }
         catch
         {
@@ -29,8 +30,8 @@ public class BookRepository : IBookRepository, IDisposable
         try
         {
             var search = await _db.Books.Where(b => b.Name == name).AsNoTracking().ToListAsync();
-            if (search is not null) return search;
-            throw new Exception("Не удалось найти книгу");
+            if (search.Count != 0) return search;
+            throw new Exception($"Not Found Book {name}");
         }
         catch
         {
@@ -44,8 +45,8 @@ public class BookRepository : IBookRepository, IDisposable
         {
             var search = await _db.Books.Where(b => b.Release.Date == date).AsNoTracking().ToListAsync();
 
-            if (search is not null) return search;
-            throw new Exception("Не удалось найти книгу");
+            if (search.Count != 0) return search;
+            throw new Exception($"Not Found Book {date.Date}");
         }
         catch
         {
@@ -59,8 +60,8 @@ public class BookRepository : IBookRepository, IDisposable
         {
             var search = await _db.Books.Where(b => b.Name == name && b.Release.Date == date).AsNoTracking()
                 .ToListAsync();
-            if (search is not null) return search;
-            throw new Exception("Не удалось найти книгу");
+            if (search.Count != 0) return search;
+            throw new Exception("Not Found Book");
         }
         catch
         {
@@ -72,15 +73,9 @@ public class BookRepository : IBookRepository, IDisposable
     {
         try
         {
-            var search = await _db.Books.FirstOrDefaultAsync(b => b.BookId == book.BookId);
-            if (search is null)
-            {
                 var result = await _db.Books.AddAsync(book);
                 await _db.SaveChangesAsync();
                 return result.Entity;
-            }
-
-            throw new Exception("Не удалось создать книгу книгу");
         }
         catch
         {
@@ -98,7 +93,7 @@ public class BookRepository : IBookRepository, IDisposable
         }
         catch
         {
-            throw new Exception("Не удалось удалить");
+            throw new Exception("Failed to create book");
         }
     }
 
@@ -114,7 +109,7 @@ public class BookRepository : IBookRepository, IDisposable
                 return result.Entity;
             }
 
-            throw new Exception("Не удалось создать книгу книгу");
+            throw new Exception("Failed to remove book");
         }
         catch
         {

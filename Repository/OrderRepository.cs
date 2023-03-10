@@ -19,10 +19,10 @@ public class OrderRepository : IOrderRepository
                 .Include(o => o.Books)
                 .ToListAsync();
 
-            if (selectOrder is not null)
+            if (selectOrder.Count != 0)
                 return selectOrder;
 
-            throw new Exception("Не удалось найти заказ");
+            throw new Exception("Order not found");
         }
         catch
         {
@@ -40,10 +40,10 @@ public class OrderRepository : IOrderRepository
                 .AsNoTracking()
                 .ToListAsync();
 
-            if (selectOrder is not null)
+            if (selectOrder.Count != 0)
                 return selectOrder;
 
-            throw new Exception("Не удалось найти заказы");
+            throw new Exception("Could not find orders");
         }
         catch
         {
@@ -62,10 +62,10 @@ public class OrderRepository : IOrderRepository
                 .AsNoTracking()
                 .ToListAsync();
 
-            if (selectOrder is not null)
+            if (selectOrder.Count != 0)
                 return selectOrder;
 
-            throw new Exception("Не удалось найти заказы");
+            throw new Exception("Could not find orders");
         }
         catch
         {
@@ -105,6 +105,10 @@ public class OrderRepository : IOrderRepository
     {
         try
         {
+            var search = await _db.Orders.FirstOrDefaultAsync(o => o.OrderId == order.OrderId);
+
+            if (search is null) throw new Exception("Order not found");
+
             foreach (var book in ArrayBooksId)
             {
                 var foundBook = await _db.Books
@@ -143,7 +147,7 @@ public class OrderRepository : IOrderRepository
                 await _db.Orders
                     .FirstOrDefaultAsync(o => o.OrderId == orderId);
 
-            if (search is null) throw new Exception("Не удалось найти заказ");
+            if (search is null) throw new Exception("Order not found");
             _db.Orders.Remove(search);
             await _db.SaveChangesAsync();
             return search;
@@ -163,7 +167,7 @@ public class OrderRepository : IOrderRepository
                     .FirstOrDefaultAsync(bo => bo.OrderId == orderId
                                                && bo.BookId == bookId);
 
-            if (search is null) throw new Exception("Не удалось найти заказ");
+            if (search is null) throw new Exception("Could not find order or book");
             _db.BooksOrders.Remove(search);
             await _db.SaveChangesAsync();
             return search;
@@ -173,7 +177,6 @@ public class OrderRepository : IOrderRepository
             throw;
         }
     }
-
 
     protected virtual void Dispose(bool disposing)
     {
