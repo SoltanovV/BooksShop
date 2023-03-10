@@ -1,9 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Net;
+﻿using System.Net;
 using System.Text.Json;
-using Microsoft.SqlServer.Server;
-using System.Reflection.Metadata;
-//using Notes.Application.Common.Exceptions;
 
 namespace BooksShop.Middlewares;
 
@@ -27,12 +23,19 @@ public class ExceptionHanlingMiddleware
         }
         catch (Exception ex)
         {
-            await HadleExceptionAsync(http, ex.Message, HttpStatusCode.NotFound, ex.Message);
+            await HadleExceptionAsync(http, ex.Message, HttpStatusCode.NotFound);
         }
     }
 
-    private async Task HadleExceptionAsync(HttpContext context, string exMessage, HttpStatusCode statusCode,
-        string message)
+
+    /// <summary>
+    /// Метод для обработки исключений
+    /// </summary>
+    /// <param name="context">Тип передачи данных</param>
+    /// <param name="exMessage">Текс исключения</param>
+    /// <param name="statusCode">Код статуса кода</param>
+    /// <returns>Сущность ошибки</returns>
+    private async Task HadleExceptionAsync(HttpContext context, string exMessage, HttpStatusCode statusCode)
     {
         _logger.LogError(exMessage);
         var response = context.Response;
@@ -43,7 +46,7 @@ public class ExceptionHanlingMiddleware
         ErrorDto errorDto = new()
         {
             StatusCode = (int)statusCode,
-            Message = message
+            Message = exMessage
         };
 
         var result = JsonSerializer.Serialize(errorDto);
