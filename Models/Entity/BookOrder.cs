@@ -16,7 +16,7 @@ public class BookOrder
     /// <summary>
     /// Навигационное свойство для Order
     /// </summary>
-    public Order Order { get; set; }
+    public Order? Order { get; set; }
 
     /// <summary>
     /// Id книги

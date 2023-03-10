@@ -15,15 +15,15 @@ public class Order
     /// <summary>
     /// Дата создания заказа
     /// </summary>
-    public DateTime OrderDate { get; set; }
+    public DateTime OrderDate { get; set; } = DateTime.Now;
 
     /// <summary>
     /// Навигационное свойство для Book
     /// </summary>
-    public IEnumerable<Book> Books { get; set; }
+    public IEnumerable<Book>? Books { get; set; }
 
     /// <summary>
     /// Навигационное свойство для BookOrder
     /// </summary>
-    public IEnumerable<BookOrder> BookOrder { get; set; }
+    public IEnumerable<BookOrder>? BookOrder { get; set; }
 }

@@ -18,7 +18,7 @@ public class Book
     /// <summary>
     /// Дата выхода книги
     /// </summary>
-    public DateTime Release { get; set; }
+    public DateTime Release { get; set; } = DateTime.Now;
 
     /// <summary>
     /// Навигационное свойство для Order
