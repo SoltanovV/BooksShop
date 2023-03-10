@@ -1,196 +1,139 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BooksShop.Controllers
+namespace BooksShop.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class BookController : Controller
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class BookController : Controller
+    private readonly ILogger<BookController> _logger;
+    private readonly IBookRepository _repo;
+    private readonly IMapper _mapper;
+
+    public BookController(IBookRepository repo, ILogger<BookController> logger, IMapper mapper)
     {
-        private readonly ILogger<BookController> _logger;
-        private readonly IBookRepository _repo;
-        private readonly IMapper _mapper;
+        _repo = repo;
+        _logger = logger;
+        _mapper = mapper;
+    }
 
-        public BookController(IBookRepository repo, ILogger<BookController> logger, IMapper mapper)
-        {
-            _repo = repo;
-            _logger = logger;
-            _mapper = mapper;
-        }
+    [HttpGet]
+    [Route("id/{id:guid}")]
+    public async Task<ActionResult<GerBookResponce>> GetBookIdAsync(Guid id)
+    {
+        _logger.LogInformation("Запрос GetBookIdAsync получен");
 
-        [HttpGet]
-        [Route("id/{id}")]
-        public async Task<ActionResult<GerBookResponce>> GetBookIdAsync (Guid id)
-        {
-            try
-            {
-                _logger.LogInformation("Запрос GetBookIdAsync получен");
+        var result = await _repo.GetBookAsync(id);
 
-                var result = await _repo.GetBookAsync(id);
+        var responce = _mapper.Map<GerBookResponce>(result);
 
-                var responce = _mapper.Map<GerBookResponce>(result);
+        _logger.LogInformation("Запрос GetBookIdAsync выполнен");
 
-                _logger.LogInformation("Запрос GetBookIdAsync выполнен");
+        return Ok(responce);
+    }
 
-                return Ok(responce);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                return BadRequest(ex.Message);
-            }
-           
-        }
+    [HttpGet]
+    [Route("name/{name}")]
+    public async Task<ActionResult<IEnumerable<GerBookResponce>>> GetBooksNameAsync(string name)
+    {
 
-        [HttpGet]
-        [Route("name/{name}")]
-        public async Task<ActionResult<IEnumerable<GerBookResponce>>> GetBooksNameAsync(string name)
-         {
-            try
-            {
-                _logger.LogInformation("Запрос GetBookNameAsync получен");
+        _logger.LogInformation("Запрос GetBookNameAsync получен");
 
-                var result = await _repo.GetBooksAsync(name);
+        var result = await _repo.GetBooksAsync(name);
 
-                var responce = _mapper.Map<IEnumerable<GerBookResponce>>(result);
+        var responce = _mapper.Map<IEnumerable<GerBookResponce>>(result);
 
-                _logger.LogInformation("Запрос GetBookNameAsync выполнен");
+        _logger.LogInformation("Запрос GetBookNameAsync выполнен");
 
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                return BadRequest(ex.Message);
-            }
+        return Ok(responce);
 
-        }
+    }
 
-        [HttpGet]
-        [Route("date/{date}")]
-        public async Task<ActionResult<IEnumerable<GerBookResponce>>> GetBooksDateAsync(DateTime date)
-        {
-            try
-            {
-                _logger.LogInformation("Запрос GetBookDateAsync получен");
+    [HttpGet]
+    [Route("date/{date:datetime}")]
+    public async Task<ActionResult<IEnumerable<GerBookResponce>>> GetBooksDateAsync(DateTime date)
+    {
 
-                var result = await _repo.GetBooksAsync(date);
+        _logger.LogInformation("Запрос GetBookDateAsync получен");
 
-                var responce =_mapper.Map<IEnumerable<GerBookResponce>>(result);
+        var result = await _repo.GetBooksAsync(date);
 
-                _logger.LogInformation("Запрос GetBookDateAsync выполнен");
+        var responce = _mapper.Map<IEnumerable<GerBookResponce>>(result);
 
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                return BadRequest(ex.Message);
-            }
+        _logger.LogInformation("Запрос GetBookDateAsync выполнен");
 
-        }
+        return Ok(responce);
 
-        [HttpGet]
-        [Route("name/date/{name}/{date}")]
-        public async Task<ActionResult<IEnumerable<GerBookResponce>>> GetBooksAsync(string name,DateTime date)
-        {
-            try
-            {
-                _logger.LogInformation("Запрос GetBookDateAsync получен");
+    }
 
-                var result = await _repo.GetBooksAsync(name, date);
+    [HttpGet]
+    [Route("name/date/{name}/{date:datetime}")]
+    public async Task<ActionResult<IEnumerable<GerBookResponce>>> GetBooksAsync(string name, DateTime date)
+    {
 
-                var responce = _mapper.Map<IEnumerable<GerBookResponce>>(result);
+        _logger.LogInformation("Запрос GetBookDateAsync получен");
 
-                _logger.LogInformation("Запрос GetBookDateAsync выполнен");
+        var result = await _repo.GetBooksAsync(name, date);
 
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                return BadRequest(ex.Message);
-            }
-        }
+        var responce = _mapper.Map<IEnumerable<GerBookResponce>>(result);
 
-        [HttpPost]
-        [Route("create")]
-        public async Task<ActionResult<CreateBookResponce>> CreateBookAsync([FromBody] CreateBookRequest request)
-        {
-            try
-            {
-                _logger.LogInformation("Запрос GetBookDateAsync получен");
+        _logger.LogInformation("Запрос GetBookDateAsync выполнен");
 
-                var book = _mapper.Map<Book>(request);
+        return Ok(responce);
 
-                var result = await _repo.CreateBookAsync(book);
+    }
 
-                var responce = _mapper.Map<CreateBookResponce>(result);
+    [HttpPost]
+    [Route("create")]
+    public async Task<ActionResult<CreateBookResponce>> CreateBookAsync([FromBody] CreateBookRequest request)
+    {
+        _logger.LogInformation("Запрос GetBookDateAsync получен");
 
-                _logger.LogInformation("Запрос GetBookDateAsync выполнен");
+        var book = _mapper.Map<Book>(request);
 
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                return BadRequest(ex.Message);
-            }
+        var result = await _repo.CreateBookAsync(book);
 
-        }
+        var responce = _mapper.Map<CreateBookResponce>(result);
 
-        [HttpPost]
-        [Route("update")]
-        public async Task<ActionResult<UpdateBookResponce>> UpdateBookAsync([FromBody] UpdateBookRequest request)
-        {
-            try
-            {
-                _logger.LogInformation("Запрос GetBookDateAsync получен");
+        _logger.LogInformation("Запрос GetBookDateAsync выполнен");
 
-                var book = _mapper.Map<Book>(request);
+        return Ok(responce);
+    }
 
-                var result = await _repo.UpdateBookAsync(book);
+    [HttpPost]
+    [Route("update")]
+    public async Task<ActionResult<UpdateBookResponce>> UpdateBookAsync([FromBody] UpdateBookRequest request)
+    {
+        _logger.LogInformation("Запрос GetBookDateAsync получен");
 
-                var responce = _mapper.Map<UpdateBookResponce>(result);
+        var book = _mapper.Map<Book>(request);
 
-                _logger.LogInformation("Запрос GetBookDateAsync выполнен");
+        var result = await _repo.UpdateBookAsync(book);
 
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                return BadRequest(ex.Message);
-            }
+        var responce = _mapper.Map<UpdateBookResponce>(result);
 
-        }
+        _logger.LogInformation("Запрос GetBookDateAsync выполнен");
 
-        [HttpPost]
-        [Route("remove/{id}")]
-        public async Task<IActionResult> RemoveBookAsyncBookAsync(Guid id)
-        {
-            try
-            {
-                _logger.LogInformation("Запрос GetBookDateAsync получен");
+        return Ok(responce);
+    }
 
-                var result = await _repo.RemoveBookAsync(id);
+    [HttpPost]
+    [Route("remove/{id:guid}")]
+    public async Task<IActionResult> RemoveBookAsyncBookAsync(Guid id)
+    {
+        _logger.LogInformation("Запрос GetBookDateAsync получен");
 
-                _logger.LogInformation("Запрос GetBookDateAsync выполнен");
+        var result = await _repo.RemoveBookAsync(id);
 
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                return BadRequest(ex.Message);
-            }
+        _logger.LogInformation("Запрос GetBookDateAsync выполнен");
 
-        }
+        return Ok(result);
+    }
 
-        protected override void Dispose(bool disposing)
-        {
-            _repo.Dispose();
-            base.Dispose(disposing);
-        }
+    protected override void Dispose(bool disposing)
+    {
+        _repo.Dispose();
+        base.Dispose(disposing);
     }
 }

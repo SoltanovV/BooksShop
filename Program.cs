@@ -1,7 +1,5 @@
-using AutoMapper;
+using BooksShop.Middlewares;
 using BooksShop.Utilities;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,15 +8,15 @@ builder.Services.AddControllers();
 
 // Get string connetctions sql
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
-// passing a string connetction 
+// passing string connetction 
 builder.Services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(connection));
 
 
-builder.Services.AddMvc().AddJsonOptions(o => {
+builder.Services.AddMvc().AddJsonOptions(o =>
+{
     o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     o.JsonSerializerOptions.MaxDepth = 0;
     o.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-    
 });
 
 // settings automapper
@@ -32,8 +30,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -43,6 +39,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<ExceptionHanlingMiddleware>();
 app.MapControllers();
 
 app.Run();

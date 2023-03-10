@@ -1,191 +1,194 @@
-﻿namespace BooksShop.Repository
+﻿namespace BooksShop.Repository;
+
+public class OrderRepository : IOrderRepository
 {
-    public class OrderRepository : IOrderRepository
+    private readonly ApplicationContext _db;
+    private bool disposed = false;
+
+    public OrderRepository(ApplicationContext db)
     {
-        private readonly ApplicationContext _db;
-        private bool disposed = false;
+        _db = db;
+    }
 
-        public OrderRepository(ApplicationContext db)
+    public async Task<IEnumerable<Order>> GetOrderAsync(Guid num)
+    {
+        try
         {
-            _db = db;
+            var selectOrder = await _db.Orders
+                .Where(o => o.OrderId == num)
+                .Include(o => o.Books)
+                .ToListAsync();
 
+            if (selectOrder.Count != 0)
+                return selectOrder;
+
+            throw new Exception("Order not found");
         }
-
-        public async Task<IEnumerable<Order>> GetOrderAsync(Guid num)
+        catch
         {
-            try
-            {
-                var selectOrder = await _db.Orders
-                                        .Where(o => o.OrderId == num)
-                                        .Include(o => o.Books)
-                                        .ToListAsync();
-
-                if (selectOrder is not null)
-                    return selectOrder;
-
-                throw new Exception("Не удалось найти заказ");
-            }
-            catch
-            {
-                throw;
-            }
+            throw;
         }
+    }
 
-        public async Task<IEnumerable<Order>> GetOrdersAsync(DateTime date)
+    public async Task<IEnumerable<Order>> GetOrdersAsync(DateTime date)
+    {
+        try
         {
-            try
-            {
-                var selectOrder = await _db.Orders
-                                        .Where(o => o.OrderDate.Date == date)
-                                        .Include(o => o.Books)
-                                        .AsNoTracking()
-                                        .ToListAsync();
+            var selectOrder = await _db.Orders
+                .Where(o => o.OrderDate.Date == date)
+                .Include(o => o.Books)
+                .AsNoTracking()
+                .ToListAsync();
 
-                if (selectOrder is not null)
-                    return selectOrder;
+            if (selectOrder.Count != 0)
+                return selectOrder;
 
-                throw new Exception("Не удалось найти заказы");
-            }
-            catch
-            {
-                throw;
-            }
+            throw new Exception("Could not find orders");
         }
-
-        public async Task<IEnumerable<Order>> GetOrdersAsync(Guid num, DateTime date)
+        catch
         {
-            try
-            {
-                var selectOrder = await _db.Orders
-                                        .Where(o => o.OrderDate.Date == date && o.OrderId == num)
-                                        .Include(o => o.Books)
-                                        .AsNoTracking()
-                                        .ToListAsync();
-
-                if (selectOrder is not null)
-                    return selectOrder;
-
-                throw new Exception("Не удалось найти заказы");
-            }
-            catch
-            {
-                throw;
-            }
+            throw;
         }
+    }
 
-        public async Task<Order> CreateOrderAsync(Order model, IEnumerable<Guid> booksIds)
+    public async Task<IEnumerable<Order>> GetOrdersAsync(Guid num, DateTime date)
+    {
+        try
         {
-            try
-            {
-                var order = await _db.Orders.SingleOrDefaultAsync(o => o.OrderId == model.OrderId);
+            var selectOrder = await _db.Orders
+                .Where(o => o.OrderDate.Date == date
+                            && o.OrderId == num)
+                .Include(o => o.Books)
+                .AsNoTracking()
+                .ToListAsync();
 
-                if (order is null)
-                {
-                    await _db.Orders.AddAsync(model);
-                    await _db.SaveChangesAsync();
+            if (selectOrder.Count != 0)
+                return selectOrder;
 
-                    await UpdateOrderAsync(model, booksIds);
-
-                    return model;
-                }
-                else
-                {
-                    await UpdateOrderAsync(order, booksIds);
-
-                    return model;
-                }
-            }
-            catch
-            {
-                throw;
-            }
+            throw new Exception("Could not find orders");
         }
-
-        public async Task<Order> UpdateOrderAsync(Order order, IEnumerable<Guid> ArrayBooksId)
+        catch
         {
-            try
+            throw;
+        }
+    }
+
+    public async Task<Order> CreateOrderAsync(Order model, IEnumerable<Guid> booksIds)
+    {
+        try
+        {
+            var order = await _db.Orders.SingleOrDefaultAsync(o => o.OrderId == model.OrderId);
+
+            if (order is null)
             {
-                foreach (var book in ArrayBooksId)
-                {
-                    var foundBook = await _db.Books.SingleOrDefaultAsync(b => b.BookId == book);
-
-                    if (foundBook is null)
-                        continue;
-
-                    var orderBook = await _db.BooksOrders.FirstOrDefaultAsync(bo => bo.OrderId == order.OrderId && bo.BookId == foundBook.BookId);
-
-                    if (orderBook is null)
-                        await _db.BooksOrders.AddAsync(new BookOrder() { OrderId = order.OrderId, BookId = foundBook.BookId });
-                }
-
+                await _db.Orders.AddAsync(model);
                 await _db.SaveChangesAsync();
-                return order;
+
+                await UpdateOrderAsync(model, booksIds);
+
+                return model;
             }
-            catch
+            else
             {
-                throw;
+                await UpdateOrderAsync(order, booksIds);
+
+                return model;
             }
         }
-
-        public async Task<Order> RemoveOrderAsync(Guid orderId)
+        catch
         {
-            try
-            {
-                var search = await _db.Orders.FirstOrDefaultAsync(o => o.OrderId == orderId);
-
-                if (search is not null)
-                {
-                    _db.Orders.Remove(search);
-                    await _db.SaveChangesAsync();
-                    return search;
-                }
-
-                throw new Exception("Не удалось найти заказ");
-            }
-            catch
-            {
-                throw;
-            }
+            throw;
         }
-        public async Task<BookOrder> RemoveBookInOrderAsync(Guid oderId, Guid bookId )
+    }
+
+    public async Task<Order> UpdateOrderAsync(Order order, IEnumerable<Guid> ArrayBooksId)
+    {
+        try
         {
-            try
-            {
-                var search = await _db.BooksOrders.FirstOrDefaultAsync(bo => bo.OrderId == oderId && bo.BookId == bookId);
+            var search = await _db.Orders.FirstOrDefaultAsync(o => o.OrderId == order.OrderId);
 
-                if (search is not null)
-                {
-                    _db.BooksOrders.Remove(search);
-                    await _db.SaveChangesAsync();
-                    return search;
-                }
+            if (search is null) throw new Exception("Order not found");
 
-                throw new Exception("Не удалось найти заказ");
-            }
-            catch
+            foreach (var book in ArrayBooksId)
             {
-                throw;
+                var foundBook = await _db.Books
+                    .SingleOrDefaultAsync(b => b.BookId == book);
+
+                if (foundBook is null)
+                    continue;
+
+                var orderBook = await _db.BooksOrders
+                    .FirstOrDefaultAsync(bo => bo.OrderId == order.OrderId
+                                               && bo.BookId == foundBook.BookId);
+
+                if (orderBook is null)
+                    await _db.BooksOrders
+                        .AddAsync(new BookOrder()
+                        {
+                            OrderId = order.OrderId,
+                            BookId = foundBook.BookId
+                        });
             }
+
+            await _db.SaveChangesAsync();
+            return order;
         }
-
-
-        protected virtual void Dispose(bool disposing)
+        catch
         {
-            if (!this.disposed)
-            {
-                if (disposing)
-                {
-                    _db.Dispose();
-                }
-            }
-            this.disposed = true;
+            throw;
         }
+    }
 
-        public void Dispose()
+    public async Task<Order> RemoveOrderAsync(Guid orderId)
+    {
+        try
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+            var search =
+                await _db.Orders
+                    .FirstOrDefaultAsync(o => o.OrderId == orderId);
 
+            if (search is null) throw new Exception("Order not found");
+            _db.Orders.Remove(search);
+            await _db.SaveChangesAsync();
+            return search;
+        }
+        catch
+        {
+            throw;
+        }
+    }
+
+    public async Task<BookOrder> RemoveBookInOrderAsync(Guid orderId, Guid bookId)
+    {
+        try
+        {
+            var search =
+                await _db.BooksOrders
+                    .FirstOrDefaultAsync(bo => bo.OrderId == orderId
+                                               && bo.BookId == bookId);
+
+            if (search is null) throw new Exception("Could not find order or book");
+            _db.BooksOrders.Remove(search);
+            await _db.SaveChangesAsync();
+            return search;
+        }
+        catch
+        {
+            throw;
+        }
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!disposed)
+            if (disposing)
+                _db.Dispose();
+        disposed = true;
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 }
