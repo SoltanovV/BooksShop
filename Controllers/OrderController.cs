@@ -52,8 +52,6 @@ public class OrderController : Controller
     [Route("id/date/{id:guid}/{date:datetime}")]
     public async Task<ActionResult<IEnumerable<GetOrderResponce>>> GetOrdersAsync(Guid id, DateTime date)
     {
-        try
-        {
             _logger.LogInformation("Запрос GetOrdersAsync получен");
 
             var result = await _repo.GetOrdersAsync(id, date);
@@ -63,12 +61,6 @@ public class OrderController : Controller
             _logger.LogInformation("Запрос GetOrdersAsync выполнен");
 
             return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex.Message);
-            return BadRequest(ex.Message);
-        }
     }
 
 
@@ -76,8 +68,7 @@ public class OrderController : Controller
     [Route("create")]
     public async Task<ActionResult<CreateOrderResponces>> CreateOrderAsync([FromBody] CreateOrderRequest request)
     {
-        try
-        {
+
             _logger.LogInformation("Запрос CreateOrderAsync получен");
 
             var order = _mapper.Map<Order>(request);
@@ -89,46 +80,33 @@ public class OrderController : Controller
             _logger.LogInformation("Запрос CreateOrderAsync выполнен");
 
             return Ok(responce);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex.Message);
-            return BadRequest(ex.Message);
-        }
+       
     }
 
     [HttpPost]
     [Route("update")]
-    public async Task<ActionResult<IEnumerable<UpdateOrderResponces>>> UpdateOrderAsync(
+    public async Task<ActionResult<UpdateOrderResponces>> UpdateOrderAsync(
         [FromBody] UpdateOrderRequest request)
     {
-        try
-        {
+
             _logger.LogInformation("Запрос UpdateOrderAsync получен");
 
             var order = _mapper.Map<Order>(request);
 
             var result = await _repo.UpdateOrderAsync(order, request.ArrayBooksId);
 
-            var responce = _mapper.Map<IEnumerable<CreateOrderResponces>>(result);
+            var responce = _mapper.Map<CreateOrderResponces>(result);
 
             _logger.LogInformation("Запрос UpdateOrderAsync выполнен");
 
             return Ok(responce);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex.Message);
-            return BadRequest(ex.Message);
-        }
+       
     }
 
     [HttpPost]
-    [Route("remove/{id}")]
+    [Route("Remove/{id}")]
     public async Task<IActionResult> RemoveOrderAsync(Guid id)
     {
-        try
-        {
             _logger.LogInformation("Запрос RemoveOrderAsync получен");
 
             var result = await _repo.RemoveOrderAsync(id);
@@ -136,20 +114,12 @@ public class OrderController : Controller
             _logger.LogInformation("Запрос RemoveOrderAsync выполнен");
 
             return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex.Message);
-            return BadRequest(ex.Message);
-        }
     }
 
     [HttpPost]
-    [Route("removebookinOrder/{orderId}/{bookId}")]
+    [Route("Remove/Book/{orderId}/{bookId}")]
     public async Task<IActionResult> RemoveOrderAsync(Guid orderId, Guid bookId)
     {
-        try
-        {
             _logger.LogInformation("Запрос RemoveOrderAsync получен");
 
             var result = await _repo.RemoveBookInOrderAsync(orderId, bookId);
@@ -157,12 +127,6 @@ public class OrderController : Controller
             _logger.LogInformation("Запрос RemoveOrderAsync выполнен");
 
             return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex.Message);
-            return BadRequest(ex.Message);
-        }
     }
 
 
