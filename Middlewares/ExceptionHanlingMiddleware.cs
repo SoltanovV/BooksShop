@@ -27,7 +27,6 @@ public class ExceptionHanlingMiddleware
         }
     }
 
-
     /// <summary>
     /// Метод для обработки исключений
     /// </summary>

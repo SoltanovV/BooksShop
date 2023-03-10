@@ -18,5 +18,5 @@ public class GetOrderResponce
     /// <summary>
     /// Список книг
     /// </summary>
-    public IEnumerable<Book> Books { get; set; }
+    public IEnumerable<Book> Books { get; set; } = Enumerable.Empty<Book>();
 }

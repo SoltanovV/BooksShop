@@ -19,7 +19,7 @@ public class BookController : Controller
     }
 
     [HttpGet]
-    [Route("id={id:guid}")]
+    [Route("{id:guid}")]
     public async Task<ActionResult<GetBookResponce>> GetBookIdAsync(Guid id)
     {
         _logger.LogInformation("Запрос GetBookIdAsync получен");
@@ -61,7 +61,7 @@ public class BookController : Controller
     }
 
     [HttpGet]
-    [Route("name/date/{name}/{date:datetime}")]
+    [Route("name={name}/date={date:datetime}")]
     public async Task<ActionResult<IEnumerable<GetBookResponce>>> GetBooksAsync(string name, DateTime date)
     {
         _logger.LogInformation("Запрос GetBookDateAsync получен");

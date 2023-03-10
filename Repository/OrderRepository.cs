@@ -21,10 +21,7 @@ public class OrderRepository : IOrderRepository
 
             if (selectOrder.Count == 0)
                 throw new Exception("Order not found");
-
             return selectOrder;
-
-            
         }
         catch
         {
@@ -46,8 +43,6 @@ public class OrderRepository : IOrderRepository
                 throw new Exception("Could not find orders");
 
             return selectOrder;
-
-            
         }
         catch
         {
@@ -69,9 +64,7 @@ public class OrderRepository : IOrderRepository
             if (selectOrder.Count == 0)
                 throw new Exception("Could not find orders");
 
-            return selectOrder;
-
-            
+            return selectOrder;            
         }
         catch
         {
@@ -152,7 +145,7 @@ public class OrderRepository : IOrderRepository
         {
             var search =
                 await _db.Orders
-                    .FirstOrDefaultAsync(o => o.OrderId == orderId);
+                         .FirstOrDefaultAsync(o => o.OrderId == orderId);
 
             if (search is null) 
                 throw new Exception("Order not found");
@@ -174,8 +167,8 @@ public class OrderRepository : IOrderRepository
         {
             var search =
                 await _db.BooksOrders
-                    .FirstOrDefaultAsync(bo => bo.OrderId == orderId
-                                            && bo.BookId == bookId);
+                         .FirstOrDefaultAsync(bo => bo.OrderId == orderId
+                                                 && bo.BookId == bookId);
 
             if (search is null) 
                 throw new Exception("Could not find order or book");

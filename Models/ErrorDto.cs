@@ -21,8 +21,6 @@ public class ErrorDto
     /// Переопределение метода ToString
     /// </summary>
     /// <returns></returns>
-    public override string ToString()
-    {
-        return JsonSerializer.Serialize(this);
-    }
+    public override string ToString() { return JsonSerializer.Serialize(this); }
+   
 }

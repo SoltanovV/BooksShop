@@ -19,7 +19,7 @@ public class OrderController : Controller
     }
 
     [HttpGet]
-    [Route("id={id}")]
+    [Route("{id:guid}")]
     public async Task<ActionResult<IEnumerable<GetOrderResponce>>> GetOrderAsync(Guid id)
     {
         _logger.LogInformation("Запрос GetOrderAsync получен");
@@ -30,7 +30,7 @@ public class OrderController : Controller
 
         _logger.LogInformation("Запрос GetOrderAsync выполнен");
 
-        return Ok(result);
+        return Ok(responce);
     }
 
     [HttpGet]
