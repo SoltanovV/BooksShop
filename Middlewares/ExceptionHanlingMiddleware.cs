@@ -1,5 +1,9 @@
-﻿using System.Net;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using System.Text.Json;
+using Microsoft.SqlServer.Server;
+using System.Reflection.Metadata;
+//using Notes.Application.Common.Exceptions;
 
 namespace BooksShop.Middlewares;
 
@@ -23,7 +27,7 @@ public class ExceptionHanlingMiddleware
         }
         catch (Exception ex)
         {
-            await HadleExceptionAsync(http, ex.Message, HttpStatusCode.NotFound, "Ошибка");
+            await HadleExceptionAsync(http, ex.Message, HttpStatusCode.NotFound, ex.Message);
         }
     }
 
