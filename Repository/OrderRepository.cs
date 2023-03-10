@@ -19,10 +19,12 @@ public class OrderRepository : IOrderRepository
                 .Include(o => o.Books)
                 .ToListAsync();
 
-            if (selectOrder.Count != 0)
-                return selectOrder;
+            if (selectOrder.Count == 0)
+                throw new Exception("Order not found");
 
-            throw new Exception("Order not found");
+            return selectOrder;
+
+            
         }
         catch
         {
@@ -40,10 +42,12 @@ public class OrderRepository : IOrderRepository
                 .AsNoTracking()
                 .ToListAsync();
 
-            if (selectOrder.Count != 0)
-                return selectOrder;
+            if (selectOrder.Count == 0)
+                throw new Exception("Could not find orders");
 
-            throw new Exception("Could not find orders");
+            return selectOrder;
+
+            
         }
         catch
         {
@@ -57,15 +61,17 @@ public class OrderRepository : IOrderRepository
         {
             var selectOrder = await _db.Orders
                 .Where(o => o.OrderDate.Date == date
-                            && o.OrderId == num)
+                         && o.OrderId == num)
                 .Include(o => o.Books)
                 .AsNoTracking()
                 .ToListAsync();
 
-            if (selectOrder.Count != 0)
-                return selectOrder;
+            if (selectOrder.Count == 0)
+                throw new Exception("Could not find orders");
 
-            throw new Exception("Could not find orders");
+            return selectOrder;
+
+            
         }
         catch
         {
@@ -92,7 +98,7 @@ public class OrderRepository : IOrderRepository
             {
                 await UpdateOrderAsync(order, booksIds);
 
-                return model;
+                return order;
             }
         }
         catch
@@ -107,7 +113,8 @@ public class OrderRepository : IOrderRepository
         {
             var search = await _db.Orders.FirstOrDefaultAsync(o => o.OrderId == order.OrderId);
 
-            if (search is null) throw new Exception("Order not found");
+            if (search is null) 
+                throw new Exception("Order not found");
 
             foreach (var book in ArrayBooksId)
             {
@@ -147,9 +154,12 @@ public class OrderRepository : IOrderRepository
                 await _db.Orders
                     .FirstOrDefaultAsync(o => o.OrderId == orderId);
 
-            if (search is null) throw new Exception("Order not found");
+            if (search is null) 
+                throw new Exception("Order not found");
+
             _db.Orders.Remove(search);
             await _db.SaveChangesAsync();
+
             return search;
         }
         catch
@@ -165,11 +175,14 @@ public class OrderRepository : IOrderRepository
             var search =
                 await _db.BooksOrders
                     .FirstOrDefaultAsync(bo => bo.OrderId == orderId
-                                               && bo.BookId == bookId);
+                                            && bo.BookId == bookId);
 
-            if (search is null) throw new Exception("Could not find order or book");
+            if (search is null) 
+                throw new Exception("Could not find order or book");
+
             _db.BooksOrders.Remove(search);
             await _db.SaveChangesAsync();
+
             return search;
         }
         catch

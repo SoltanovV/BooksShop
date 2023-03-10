@@ -19,7 +19,7 @@ public class OrderController : Controller
     }
 
     [HttpGet]
-    [Route("id/{id}")]
+    [Route("id={id}")]
     public async Task<ActionResult<IEnumerable<GetOrderResponce>>> GetOrderAsync(Guid id)
     {
         _logger.LogInformation("Запрос GetOrderAsync получен");
@@ -34,7 +34,7 @@ public class OrderController : Controller
     }
 
     [HttpGet]
-    [Route("date/{date:datetime}")]
+    [Route("date={date:datetime}")]
     public async Task<ActionResult<IEnumerable<GetOrderResponce>>> GetOrdersAsync(DateTime date)
     {
         _logger.LogInformation("Запрос GetOrderNumAsync получен");
@@ -49,18 +49,19 @@ public class OrderController : Controller
     }
 
     [HttpGet]
-    [Route("id/date/{id:guid}/{date:datetime}")]
+    [Route("id={id:guid}/date={date:datetime}")]
     public async Task<ActionResult<IEnumerable<GetOrderResponce>>> GetOrdersAsync(Guid id, DateTime date)
     {
-            _logger.LogInformation("Запрос GetOrdersAsync получен");
+        _logger.LogInformation("Запрос GetOrdersAsync получен");
 
-            var result = await _repo.GetOrdersAsync(id, date);
+        var result = await _repo.GetOrdersAsync(id, date);
 
-            var responce = _mapper.Map<GetOrderResponce>(result);
+        var responce = _mapper.Map<GetOrderResponce>(result);
 
-            _logger.LogInformation("Запрос GetOrdersAsync выполнен");
+        _logger.LogInformation("Запрос GetOrdersAsync выполнен");
 
-            return Ok(result);
+        return Ok(result);
+
     }
 
 
@@ -68,19 +69,16 @@ public class OrderController : Controller
     [Route("create")]
     public async Task<ActionResult<CreateOrderResponces>> CreateOrderAsync([FromBody] CreateOrderRequest request)
     {
+        _logger.LogInformation("Запрос CreateOrderAsync получен");
 
-            _logger.LogInformation("Запрос CreateOrderAsync получен");
+        var order = _mapper.Map<Order>(request);
+        var result = await _repo.CreateOrderAsync(order, request.ArrayBooksId);
+        var responce = _mapper.Map<CreateOrderResponces>(result);
 
-            var order = _mapper.Map<Order>(request);
+        _logger.LogInformation("Запрос CreateOrderAsync выполнен");
 
-            var result = await _repo.CreateOrderAsync(order, request.ArrayBooksId);
+        return Ok(responce);
 
-            var responce = _mapper.Map<CreateOrderResponces>(result);
-
-            _logger.LogInformation("Запрос CreateOrderAsync выполнен");
-
-            return Ok(responce);
-       
     }
 
     [HttpPost]
@@ -88,45 +86,43 @@ public class OrderController : Controller
     public async Task<ActionResult<UpdateOrderResponces>> UpdateOrderAsync(
         [FromBody] UpdateOrderRequest request)
     {
+        _logger.LogInformation("Запрос UpdateOrderAsync получен");
 
-            _logger.LogInformation("Запрос UpdateOrderAsync получен");
+        var order = _mapper.Map<Order>(request);
+        var result = await _repo.UpdateOrderAsync(order, request.ArrayBooksId);
+        var responce = _mapper.Map<CreateOrderResponces>(result);
 
-            var order = _mapper.Map<Order>(request);
+        _logger.LogInformation("Запрос UpdateOrderAsync выполнен");
 
-            var result = await _repo.UpdateOrderAsync(order, request.ArrayBooksId);
-
-            var responce = _mapper.Map<CreateOrderResponces>(result);
-
-            _logger.LogInformation("Запрос UpdateOrderAsync выполнен");
-
-            return Ok(responce);
-       
+        return Ok(responce);
     }
 
     [HttpPost]
-    [Route("Remove/{id}")]
+    [Route("Remove={id}")]
     public async Task<IActionResult> RemoveOrderAsync(Guid id)
     {
-            _logger.LogInformation("Запрос RemoveOrderAsync получен");
+        _logger.LogInformation("Запрос RemoveOrderAsync получен");
 
-            var result = await _repo.RemoveOrderAsync(id);
+        var result = await _repo.RemoveOrderAsync(id);
 
-            _logger.LogInformation("Запрос RemoveOrderAsync выполнен");
+        _logger.LogInformation("Запрос RemoveOrderAsync выполнен");
 
-            return Ok(result);
+        return Ok(result);
+
     }
 
     [HttpPost]
-    [Route("Remove/Book/{orderId}/{bookId}")]
+    [Route("Remove/Order={orderId}/Book={bookId}")]
     public async Task<IActionResult> RemoveOrderAsync(Guid orderId, Guid bookId)
     {
-            _logger.LogInformation("Запрос RemoveOrderAsync получен");
+        _logger.LogInformation("Запрос RemoveOrderAsync получен");
 
-            var result = await _repo.RemoveBookInOrderAsync(orderId, bookId);
+        var result = await _repo.RemoveBookInOrderAsync(orderId, bookId);
 
-            _logger.LogInformation("Запрос RemoveOrderAsync выполнен");
+        _logger.LogInformation("Запрос RemoveOrderAsync выполнен");
 
-            return Ok(result);
+        return Ok(result);
+
     }
 
 

@@ -12,7 +12,7 @@ public class AutomapperSettings : Profile
         CreateMap<UpdateBookRequest, Book>();
         CreateMap<Book, UpdateBookResponce>();
 
-        CreateMap<Book, GerBookResponce>();
+        CreateMap<Book, GetBookResponce>();
 
 
         CreateMap<CreateOrderRequest, Order>();

@@ -3,7 +3,7 @@
 /// <summary>
 /// Responce для получения списка книг
 /// </summary>
-public class GerBookResponce
+public class GetBookResponce
 {
     /// <summary>
     /// Название книги
